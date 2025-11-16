@@ -1,6 +1,7 @@
 package com.billyow.app.boardang.task.DTO;
 
 public record MoveTaskRequest(
-    Long id,
-    Integer position
-){}
+        Long taskId,
+        Long newColumnId
+) {
+}

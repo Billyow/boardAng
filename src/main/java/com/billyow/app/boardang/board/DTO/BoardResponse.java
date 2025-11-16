@@ -1,6 +1,6 @@
 package com.billyow.app.boardang.board.DTO;
 
-import com.billyow.app.boardang.boardColumn.DTO.BoardColumnDTO;
+import com.billyow.app.boardang.boardColumn.DTO.BoardColumnResponse;
 import com.billyow.app.boardang.user.DTO.UserDTO;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ public record BoardResponse(
         Date createdAt,
         Date updatedAt,
         Long ownerId,
-        List<BoardColumnDTO> columns,
+        List<BoardColumnResponse> columns,
         Set<UserDTO> members
 ) {
 }
