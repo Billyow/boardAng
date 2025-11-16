@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @Entity
 public class BoardColumn {
     @Id
-    private long BoardColumnId;
+    private long id;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
     private Integer position;
     @ManyToOne
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 }
