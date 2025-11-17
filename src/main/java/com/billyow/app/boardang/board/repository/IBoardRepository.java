@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IBoardRepository extends JpaRepository<Board, Long> {
@@ -25,4 +26,10 @@ DELETE FROM Board b
 WHERE b.id = :boardId AND b.owner.id = :ownerId
 """)
     Integer deleteByIdAndOwnerId(@Param("boardId") long boardId, @Param("ownerId") long ownerId);
+    @Query("""
+SELECT DISTINCT b FROM Board b
+JOIN b.members m
+WHERE b.id = :boardId AND m.id = :userId
+""")
+    Optional<Board> findBoardByIdAndUserHasAccess(@Param("boardId") Long boardId, @Param("userId") Long userId);
 }

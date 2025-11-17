@@ -1,17 +1,23 @@
 package com.billyow.app.boardang.board.service;
 
 import com.billyow.app.boardang.auth.service.AuthService;
+import com.billyow.app.boardang.board.DTO.BoardResponse;
+import com.billyow.app.boardang.board.DTO.BoardSummaryResponse;
 import com.billyow.app.boardang.board.DTO.CreateBoardRequest;
+import com.billyow.app.boardang.board.mapper.BoardMapper;
 import com.billyow.app.boardang.board.model.Board;
 import com.billyow.app.boardang.board.repository.IBoardRepository;
+import com.billyow.app.boardang.boardColumn.mapper.BoardColumnMapper;
 import com.billyow.app.boardang.boardColumn.repository.IBoardColumnRepository;
 import com.billyow.app.boardang.task.repository.ITaskRepository;
+import com.billyow.app.boardang.user.mapper.UserMapper;
 import com.billyow.app.boardang.user.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 
 @RequiredArgsConstructor
@@ -22,23 +28,30 @@ public class BoardServiceImpl implements IBoardService {
     private final ITaskRepository taskRepository;
     private final IBoardColumnRepository columnRepository;
     private final IUserRepository userRepository;
+    private final BoardMapper boardMapper;
+    private final UserMapper userMapper;
+    private final BoardColumnMapper boardColumnMapper;
 
     @Transactional(readOnly = true)
     @Override
-    public List<Board> getUserBoards(Long userId) {
-        return boardRepository.findAllBoardsFromUser_Id(userId);
+    public List<BoardSummaryResponse> getCurrentUserBoards() {
+        var currentUser = authService.getCurrentUserId();
+        var boards = boardRepository.findAllBoardsFromUser_Id(currentUser);
+        return boards.stream()
+                .map(boardMapper::toSummaryResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Board getBoard(Long boardId) {
-        return boardRepository.findById(boardId)
-                .orElseThrow(() -> new RuntimeException("Board not found"));
+    public BoardResponse getBoard(Long boardId) {
+        return null;
     }
 
     @Transactional
     @Override
-    public Board createBoard(CreateBoardRequest request) {
+    public BoardResponse createBoard(CreateBoardRequest request) {
+        //create the board entity
         var newBoard = new Board();
         newBoard.setTitle(request.title());
         newBoard.setDescription(request.description());
@@ -46,7 +59,15 @@ public class BoardServiceImpl implements IBoardService {
         var owner = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         newBoard.setOwner(owner);
-        return boardRepository.save(newBoard);
+        newBoard.getMembers().add(owner);
+        boardRepository.save(newBoard);
+        var ownerResponse = userMapper.toSimpleUserDTOResponse(owner);
+        //use the mappers to convert the entity into response
+        return boardMapper.toResponse(newBoard,
+                ownerResponse,
+                Set.of(ownerResponse),
+                List.of()
+                );
     }
 
     @Transactional
