@@ -1,5 +1,6 @@
 package com.billyow.app.boardang.user.mapper;
 import com.billyow.app.boardang.user.DTO.RegisterRequest;
+import com.billyow.app.boardang.user.DTO.SimpleUserDTO;
 import com.billyow.app.boardang.user.DTO.UserDTO;
 import com.billyow.app.boardang.user.model.User;
 import org.mapstruct.Mapper;
@@ -13,4 +14,6 @@ public interface UserMapper {
     @Mapping(target = "isActive", ignore = true)
     User toUser(RegisterRequest dto);
     UserDTO toUserDTOResponse(User user);
+
+    SimpleUserDTO toSimpleUserDTOResponse(User owner);
 }

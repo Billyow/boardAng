@@ -1,6 +1,7 @@
 package com.billyow.app.boardang.board.mapper;
 
 import com.billyow.app.boardang.board.DTO.BoardResponse;
+import com.billyow.app.boardang.board.DTO.BoardSummaryResponse;
 import com.billyow.app.boardang.board.model.Board;
 import com.billyow.app.boardang.boardColumn.DTO.BoardColumnResponse;
 import com.billyow.app.boardang.user.DTO.SimpleUserDTO;
@@ -21,4 +22,6 @@ public interface BoardMapper {
                              SimpleUserDTO owner,
                              Set<SimpleUserDTO> members,
                              List<BoardColumnResponse> columns);
+
+    BoardSummaryResponse toSummaryResponse(Board board);
 }
